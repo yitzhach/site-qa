@@ -1,0 +1,44 @@
+name: Test the kit
+
+# Installs the kit into a copy of test/fixture-static, the way a project
+# would get it, then type-checks and runs it. The fixture is clean, so any
+# finding is a false alarm in the kit itself.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kit/package-lock.json
+      - name: init into a copy of the fixture
+        run: |
+          cp -r test/fixture-static "$RUNNER_TEMP/site"
+          node bin/site-qa.mjs init "$RUNNER_TEMP/site"
+          node bin/site-qa.mjs update "$RUNNER_TEMP/site" | grep -q 'Already up to date'
+      - working-directory: ${{ runner.temp }}/site/qa
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run typecheck
+          npx playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixture-report
+          path: ${{ runner.temp }}/site/qa/results
+          retention-days: 14

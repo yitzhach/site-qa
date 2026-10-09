@@ -1,0 +1,7 @@
+{
+  "name": "site-qa",
+  "version": "1.0.0",
+  "description": "Browser-test any website without screenshots: a page audit (errors, links, accessibility, phone layout, dark mode), Playwright specs and CI, set up in any project with one command.",
+  "author": { "name": "yitzhach" },
+  "repository": "https://github.com/yitzhach/site-qa"
+}

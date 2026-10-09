@@ -1,0 +1,16 @@
+{
+  "name": "site-qa",
+  "owner": {
+    "name": "yitzhach"
+  },
+  "metadata": {
+    "description": "site-qa: browser testing for any website, set up with one command."
+  },
+  "plugins": [
+    {
+      "name": "site-qa",
+      "source": "./plugin",
+      "description": "Browser-test any website without screenshots, and set that up in any project with one command."
+    }
+  ]
+}
