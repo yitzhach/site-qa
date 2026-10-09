@@ -46,6 +46,8 @@ export default defineConfig({
     cwd: path.resolve(__dirname, site.serve.cwd ?? '.'),
     url: site.serve.readyURL ?? site.baseURL,
     reuseExistingServer: !CI,
-    timeout: 30_000,
+    // A cold build (typecheck + bundle on a fresh runner) often needs more
+    // than a minute; serve.timeout overrides this per project.
+    timeout: site.serve.timeout ?? 180_000,
   },
 });

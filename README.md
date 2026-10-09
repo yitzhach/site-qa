@@ -47,8 +47,9 @@ git clone --depth 1 https://github.com/yitzhach/site-qa /tmp/site-qa
 node /tmp/site-qa/bin/site-qa.mjs update .
 ```
 
-Updates replace only the shared files. A project's `qa/site.config.ts`,
-`qa/audit-baseline.json` and `qa/tests/site/` are never touched.
+Updates replace only the shared files and the site-qa block in `CLAUDE.md`.
+A project's `qa/site.config.ts`, `qa/audit-baseline.json` and
+`qa/tests/site/` are never touched.
 
 ## What `init` adds to a project
 
@@ -57,11 +58,19 @@ Updates replace only the shared files. A project's `qa/site.config.ts`,
 | `qa/` | Playwright config, the audit, the reporter, `qa/browse`, pinned dependencies |
 | `qa/site.config.ts` | How to start this site and which pages to audit. It's guessed for Vite, Next.js, `npm start` and static HTML, and every guess is marked `CHECK`. |
 | `qa/tests/site/` | The project's own specs (starts with one example) |
+| `qa/tests/views.spec.ts` | Opens every window, panel or tab listed under `views` in `site.config.ts` and audits each one. For apps that change what's on screen without changing the URL. |
 | `.github/workflows/site-qa.yml` | CI on every push and PR; uploads traces on failure |
 | `.claude/skills/site-qa/SKILL.md` | The same skill as the plugin, so `/site-qa` works in that project for anyone |
 
-It also excludes `qa/**` from a root `tsconfig.json`, so the project's own
-type check doesn't pick up the kit.
+It also keeps `qa/**` out of the project's own tooling: a root
+`tsconfig.json`, and Vitest or Jest (which would otherwise try to run the
+Playwright specs). What it can't patch safely it prints as `CHECK`.
+
+And it adds a **Site QA workflow** block to the project's `CLAUDE.md` (between
+`site-qa:begin`/`end` markers; `update` refreshes it): work on a side branch,
+report findings before changing site code, fix only what the owner approves,
+keep both test suites green, and go live only on the owner's word, then
+`npm --prefix qa run test:live` against `liveURL`.
 
 ## This repo
 

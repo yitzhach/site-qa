@@ -30,6 +30,9 @@ jobs:
           cp -r test/fixture-static "$RUNNER_TEMP/site"
           node bin/site-qa.mjs init "$RUNNER_TEMP/site"
           node bin/site-qa.mjs update "$RUNNER_TEMP/site" | grep -q 'Already up to date'
+          # The fixture's two panels exercise tests/views.spec.ts.
+          node -e "const f=process.argv[1],fs=require('fs');fs.writeFileSync(f,fs.readFileSync(f,'utf8').replace('  accept: [],',\"  accept: [],\n  views: { openWith: 'nav', names: ['Notes', 'Help'], scope: '.panel[data-open]' },\"))" "$RUNNER_TEMP/site/qa/site.config.ts"
+          grep -q "views: { openWith" "$RUNNER_TEMP/site/qa/site.config.ts"
       - working-directory: ${{ runner.temp }}/site/qa
         run: |
           npm ci

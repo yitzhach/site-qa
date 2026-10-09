@@ -16,6 +16,17 @@
     <p>site-qa's own CI installs the kit here and expects a clean run.</p>
     <p><a href="about.html">About</a></p>
     <label>Search <input type="search" name="q"></label>
+    <nav aria-label="Panels">
+      <button type="button" data-panel="notes">Notes</button>
+      <button type="button" data-panel="help">Help</button>
+    </nav>
+    <section class="panel" id="notes" hidden aria-label="Notes"><h2>Notes</h2><p>A view with no URL of its own.</p></section>
+    <section class="panel" id="help" hidden aria-label="Help"><h2>Help</h2><p>Another one.</p></section>
   </main>
+  <script>
+    for (const b of document.querySelectorAll('[data-panel]')) b.addEventListener('click', () => {
+      for (const p of document.querySelectorAll('.panel')) { p.hidden = p.id !== b.dataset.panel; p.toggleAttribute('data-open', !p.hidden); }
+    });
+  </script>
 </body>
 </html>
